@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Github API Access</title>
+    <title>Github API Access</title>  
 </head>
 <body>
     
@@ -22,10 +22,7 @@
     <script>
     const btnRepos = document.getElementById("btnRepos")
     const btnIssues = document.getElementById("btnIssues")
-
-   
     const btnCommits = document.getElementById("btnCommits")
-
     const divResult = document.getElementById("divResult")
     btnRepos.addEventListener("click", getRepos)
     btnIssues.addEventListener("click", getIssues)
@@ -52,10 +49,8 @@
         divResult.appendChild(document.createElement("br"))
 
     }
-    
 
-
-
+   
 
     async function getIssues() {
         clear();
@@ -64,8 +59,6 @@
         const url_open = "https://api.github.com/search/issues?q=repo:google-research/google-research type:issue state:open"
         const url_closed = "https://api.github.com/search/issues?q=repo:google-research/google-research type:issue state:closed"
 
-
-        
         const response_open = await fetch(url_open);
         const result_open = await response_open.json();
 
@@ -77,6 +70,8 @@
         open_count.innerHTML = "Opened issues count:";
         divResult.appendChild(open_count)
         const total_count_open = result_open.total_count;
+
+
         const display_total_count_open = document.createElement("p");
         display_total_count_open.innerHTML = total_count_open;
         divResult.appendChild(display_total_count_open);
@@ -85,12 +80,19 @@
         closed_count.innerHTML = "Closed issues count:";
         divResult.appendChild(closed_count)
         const total_count_closed = result_closed.total_count;
+
         const display_total_count_closed = document.createElement("p");
         display_total_count_closed.innerHTML = total_count_closed;
         divResult.appendChild(display_total_count_closed);
 
-    }
-
+    
+        const save_issue_count = document.createElement("button")
+        divResult.appendChild(save_issue_count); 
+        save_issue_count.textContent = "Save issues"
+        save_issue_count.onclick = function(){
+            saveHandler(total_count_open,total_count_closed);
+        }
+}
 
     //https://api.github.com/search/commits?q=repo:google-research/google-research
 
@@ -152,6 +154,19 @@
         while(divResult.firstChild) 
             divResult.removeChild(divResult.firstChild)
     }
+    </script>
+
+    <script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
+    <script>
+        function saveHandler(opencount, closecount){
+           let data = {
+               Open_issues_count: opencount,
+               Closed_issues_count: closecount
+       }
+           var content = JSON.stringify(data);
+           var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+           saveAs(blob, "Save_issues_count(demo).json");
+       }
     </script>
 </body>
 </html>
