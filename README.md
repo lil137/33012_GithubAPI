@@ -20,6 +20,7 @@ There are three functions in demo file
 
 >2.getIssues  
 >>Get the number of open issues and closed issues  
+>>The button "Save issues" can save the data collected into a json file  
 
 >3.getCommits  
 >>Get all the commits, it would display 30 records in one page as well as the buttons leading to the other pages to view the rest of the commits  
