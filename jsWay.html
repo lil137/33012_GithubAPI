@@ -10,10 +10,11 @@
         The codes are adapted from:https://github.com/hnasr/javascript_playground/blob/master/githubtutorial/index.html
 
     -->
-    <h1>Github API Access Demo</h1>
+    <h1>Github API Access for google-research/google-research repository</h1>
     <button id = 'btnRepos'>Repos</button> 
-    <button id = 'btnIssues'>Issues</button>
+    <!--<button id = 'btnIssues'>Issues</button>-->
     <button id = 'btnCommits'>Commits</button>
+    <button id = 'btnCollaborators'>Collaborators</button>
 
     <div id = 'divResult'>
 
@@ -21,11 +22,14 @@
 
     <script>
     const btnRepos = document.getElementById("btnRepos")
-    const btnIssues = document.getElementById("btnIssues")
+    //const btnIssues = document.getElementById("btnIssues")
     const btnCommits = document.getElementById("btnCommits")
+    const btnCollaborators = document.getElementById("btnCollaborators")
     const divResult = document.getElementById("divResult")
+    
     btnRepos.addEventListener("click", getRepos)
-    btnIssues.addEventListener("click", getIssues)
+    //btnIssues.addEventListener("click", getIssues)
+    btnCollaborators.addEventListener("click", getCollaborators)
     btnCommits.addEventListener("click", e=> getCommits())
 
 
@@ -52,7 +56,7 @@
 
    
 
-    async function getIssues() {
+    /*async function getIssues() {
         clear();
 
         //https://api.github.com/repos/username/repo-name/issues
@@ -92,7 +96,7 @@
         save_issue_count.onclick = function(){
             saveHandler(total_count_open,total_count_closed);
         }
-}
+    }*/
 
     //https://api.github.com/search/commits?q=repo:google-research/google-research
 
@@ -149,6 +153,127 @@
         })
 
     }
+
+
+     
+
+
+
+    async function getCollaborators() {
+        clear();
+        const url = "https://api.github.com/repos/google-research/google-research/stats/contributors"
+
+        const headers = {
+            "Accept" : "application/vnd.github.hellcat-preview+json",
+            "Authorization" : "token da3ef9069b61ee74acf8b1bde0f2ff2d0f2a9e09"
+        }
+        const response = await fetch(url, {
+            "method" : "GET",
+            "headers" : headers
+        })
+
+        const result = await response.json()
+
+        const title_name = document.createElement("p")
+        title_name.innerHTML = "Top 100 Collaborators name(Ordered by the count of commits):"
+        divResult.appendChild(title_name)
+
+
+        /*result.forEach(i=>{
+
+            const authorname_name = document.createElement("span")
+            authorname_name.innerHTML = i.author.login;
+            divResult.appendChild(authorname_name)
+            const anchor = document.createElement("a")
+            anchor.href = i.author.html_url;
+            anchor.textContent = i.author.login;
+            divResult.appendChild(anchor)
+            divResult.appendChild(document.createElement("br"))
+        })*/
+
+        const table = document.createElement("table")
+        table.border = 1
+        table.borderColor = "black"
+        table.borderBottomStyle = "solid"
+        const tr = document.createElement("tr")
+        const th1 = document.createElement("th")
+        const th2 = document.createElement("th")
+        const th3 = document.createElement("th")
+        const th4 = document.createElement("th")
+        const th5 = document.createElement("th")
+
+        divResult.appendChild(table);
+        table.appendChild(tr);
+        tr.appendChild(th1);
+        th1.textContent = "User_name";
+        tr.appendChild(th2);
+        th2.textContent = "User_url";
+        tr.appendChild(th3)
+        th3.textContent = "Commits_count"
+        tr.appendChild(th4)
+        th4.textContent = "LOC added"
+        tr.appendChild(th5)
+        th5.textContent = "LOC Deleted"
+            
+        
+        for ( var j = result.length-1; j > -1 ; j--){
+            const i = result[j]
+            //const authorname_name = document.createElement("span")
+            const rank = 100 - j
+            //authorname_name.innerHTML = rank + "&nbsp;" + i.author.login + "&nbsp;";
+
+            const tr_infor = document.createElement("tr")
+            table.appendChild(tr_infor);
+            const td1 = document.createElement("td")
+            tr_infor.appendChild(td1)
+            //td1.align = "middle";
+            td1.innerHTML = rank + "&nbsp;" + i.author.login + "&nbsp;";
+            const td2 = document.createElement("td")
+            td2.align = "middle";
+            const anchor = document.createElement("a")
+            anchor.href = i.author.html_url;
+            anchor.textContent = i.author.login;
+            td2.appendChild(anchor)
+            tr_infor.appendChild(td2)
+
+
+            const td3 = document.createElement("td")
+            td3.align = "middle";
+            tr_infor.appendChild(td3)
+            td3.innerHTML = i.total;
+
+            const td4 = document.createElement("td")
+            td4.align = "middle";
+            tr_infor.appendChild(td4)
+            var loc_add = 0;
+            for( var x = 0 ; x < i.weeks.length; x++){
+                loc_add += i.weeks[x].a;
+            }
+            td4.innerHTML = loc_add;
+
+            const td5 = document.createElement("td")
+            td5.align = "middle";
+            tr_infor.appendChild(td5)
+            var loc_delete = 0;
+            for( var x = 0 ; x < i.weeks.length; x++){
+                loc_delete += i.weeks[x].d;
+            }
+            td5.innerHTML = loc_delete;
+            
+
+
+            //divResult.appendChild(authorname_name)
+            /*const anchor = document.createElement("a")
+            anchor.href = i.author.html_url;
+            anchor.textContent = i.author.login;
+            divResult.appendChild(anchor)*/
+            //divResult.appendChild(document.createElement("br"))
+        }
+
+    }
+    
+
+
 
     function clear(){
         while(divResult.firstChild) 
