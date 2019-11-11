@@ -133,9 +133,6 @@
             anchor.href = i.html_url;
             anchor.textContent = i.commit.message.substr(0,100) + "...";
             
-
-
-            
             divResult.appendChild(anchor)
             divResult.appendChild(document.createElement("br"))
         })
@@ -154,6 +151,15 @@
 
     }
 
+    async function getUsers(Username,data){
+        const url = "https://api.github.com/users/" + Username 
+        const response = await fetch(url)
+        const result = await response.json()
+        data["name"] = result.name;
+        data["company"] = result.company;
+        data["location"] = result.location;
+
+    }
 
      
 
@@ -165,7 +171,7 @@
 
         const headers = {
             "Accept" : "application/vnd.github.hellcat-preview+json",
-            "Authorization" : "token da3ef9069b61ee74acf8b1bde0f2ff2d0f2a9e09"
+            "Authorization" : "token 1db4b671265287b215bb2c42e9489bb4fdc6dfa4"
         }
         const response = await fetch(url, {
             "method" : "GET",
@@ -177,6 +183,15 @@
         const title_name = document.createElement("p")
         title_name.innerHTML = "Top 100 Collaborators name(Ordered by the count of commits):"
         divResult.appendChild(title_name)
+
+        const save_users = document.createElement("button")
+        divResult.appendChild(save_users);
+        divResult.appendChild(document.createElement("br")) 
+        divResult.appendChild(document.createElement("br")) 
+        save_users.textContent = "Save users info"
+        save_users.onclick = function(){
+            saveHandler_user(datas);
+        }
 
 
         /*result.forEach(i=>{
@@ -214,6 +229,8 @@
         th4.textContent = "LOC added"
         tr.appendChild(th5)
         th5.textContent = "LOC Deleted"
+
+        var datas=[];
             
         
         for ( var j = result.length-1; j > -1 ; j--){
@@ -259,15 +276,18 @@
                 loc_delete += i.weeks[x].d;
             }
             td5.innerHTML = loc_delete;
+
+
             
+ 
+		var data = {};
+		data["Login_name"] = i.author.login;
+		data["Commits_count"] = i.total;
+		data["LOC_added"] = loc_add;
+        data["LOC_deleted"] = loc_delete;
+        getUsers(i.author.login, data)
+		datas.push(data);
 
-
-            //divResult.appendChild(authorname_name)
-            /*const anchor = document.createElement("a")
-            anchor.href = i.author.html_url;
-            anchor.textContent = i.author.login;
-            divResult.appendChild(anchor)*/
-            //divResult.appendChild(document.createElement("br"))
         }
 
     }
@@ -291,6 +311,12 @@
            var content = JSON.stringify(data);
            var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
            saveAs(blob, "Save_issues_count(demo).json");
+       }
+
+       function saveHandler_user(datas){
+           var content = JSON.stringify(datas);
+           var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+           saveAs(blob, "Save_users.json");
        }
     </script>
 </body>

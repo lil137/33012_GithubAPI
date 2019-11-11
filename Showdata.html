@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Using d3 to show data</title>  
+</head>
+<body>
+    <h1>D3 visualization for google-research/google-research repository</h1>
+
+    <div>
+        <!--<input type="file" id="files" name="Select file"/>-->
+        <input type="file" name="select_file" id="files" style="visibility:hidden;"><br>
+        <input type="button" onclick="SelectFile()" value="Select file">
+
+    </div>
+
+
+    <script>
+        var datas;
+        var valid_user = new Array();
+        var valid_count = 0;
+        var location_name = new Array();
+
+        var USA = new Array();
+        var UK = new Array();
+        var Canada = new Array();
+        var Germany = new Array();
+        var Swiss = new Array();
+        var France = new Array();
+
+        function filter_data(){
+            for ( var i = 0; i < datas.length ; i++){
+                if(datas[i].location != null){
+                    valid_user[valid_count] = datas[i];
+                    //valid_user[valid_count].location = valid_user[valid_count].location.split(",",1)
+                    valid_count++;
+                }
+            }
+
+            //location_name.push(valid_user[0].location)
+            for( var i = 0 ; i < valid_count ; i++){
+                var is_duplicate = false;
+                if(location_name.length == 0){
+                    location_name.push(valid_user[i].location);
+                }else{
+                    for( var j = 0 ; j < location_name.length ; j++){
+                        if(valid_user[i].location == location_name[j]){
+                            is_duplicate = true;
+                        }
+                    }
+
+                    if(is_duplicate == false){
+                        location_name.push(valid_user[i].location);
+                    }
+                }
+            }
+
+            
+
+            for (var i = 0 ; i < valid_count; i++){
+                var temp = valid_user[i].location;
+                if(temp == "London, UK" || temp == "London"){
+                    UK.push(temp);
+                }else if(temp == "Montreal" || temp == "Toronto"){
+                    Canada.push(temp);
+                }else if(temp == "Tübingen"){
+                    Germany.push(temp);
+                }else if(temp == "Zürich"){
+                    Swiss.push(temp);
+                }else if(temp == "Paris"){
+                    France.push(temp);
+                }else{
+                    USA.push(temp);
+                }
+            }
+
+
+
+        }
+
+        function SelectFile()
+        {
+            files.click();
+        }
+
+        var inputElement = document.getElementById("files");
+        inputElement.addEventListener("change", handleFiles, false);
+
+        function handleFiles() {
+            var selectedFile = document.getElementById("files").files[0];// get the file read object
+            var name = selectedFile.name;
+            var size = selectedFile.size;
+            var reader = new FileReader();
+            
+            
+            var data_length;
+            reader.onload = function(){
+                let json = JSON.parse(this.result);
+                datas = json;
+                filter_data();
+                return;
+                
+            }; 
+            reader.readAsText(selectedFile);        
+        }
+
+        
+
+    
+    </script>
+
+
+
+</body>
