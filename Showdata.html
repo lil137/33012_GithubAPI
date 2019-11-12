@@ -9,7 +9,6 @@
     <h1>D3 visualization for google-research/google-research repository</h1>
 
     <div>
-        <!--<input type="file" id="files" name="Select file"/>-->
         <input type="file" name="select_file" id="files" style="visibility:hidden;"><br>
         <input type="button" onclick="SelectFile()" value="Select file"><br><br><br>
 
@@ -28,6 +27,13 @@
         var Germany = new Array();
         var Swiss = new Array();
         var France = new Array();
+
+        var USA_loc = new Array();
+        var UK_loc = new Array();
+        var Canada_loc = new Array();
+        var Germany_loc = new Array();
+        var Swiss_loc = new Array();
+        var France_loc = new Array();
 
         function filter_data(){
             for ( var i = 0; i < datas.length ; i++){
@@ -56,30 +62,46 @@
                 }
             }
 
-            
-
             for (var i = 0 ; i < valid_count; i++){
                 var temp = valid_user[i].location;
+                var loc_a = valid_user[i].LOC_added;
+                var loc_d = valid_user[i].LOC_deleted;
                 if(temp == "London, UK" || temp == "London"){
                     UK.push(temp);
+                    UK_loc.push(loc_a);
+                    UK_loc.push(loc_d);
                 }else if(temp == "Montreal" || temp == "Toronto"){
                     Canada.push(temp);
+                    Canada_loc.push(loc_a);
+                    Canada_loc.push(loc_d);
                 }else if(temp == "Tübingen"){
                     Germany.push(temp);
+                    Germany_loc.push(loc_a);
+                    Germany_loc.push(loc_d);
                 }else if(temp == "Zürich"){
                     Swiss.push(temp);
+                    Swiss_loc.push(loc_a);
+                    Swiss_loc.push(loc_d);
                 }else if(temp == "Paris"){
                     France.push(temp);
+                    France_loc.push(loc_a);
+                    France_loc.push(loc_d);
                 }else{
                     USA.push(temp);
+                    USA_loc.push(loc_a);
+                    USA_loc.push(loc_d);
                 }
             }
 
             display_piechart_country();
+            display_piechart_loc_a();
+            display_piechart_loc_d();
 
 
 
         }
+
+
 
         function display_piechart_country(){
             var USA_count = USA.length;
@@ -112,7 +134,7 @@
             var radius = 250
             var path = d3.arc()
                 .outerRadius(radius)
-                .innerRadius(35);
+                .innerRadius(20);
 
             var path0 = d3.arc()
                 .outerRadius(radius+10)
@@ -188,9 +210,211 @@
                 .style("stroke","rgb(99,99,99)")
                 .style("stroke-width","2")
 		
+        }
+
+        function display_piechart_loc_a(){
+
+            var width = 700;
+            var height = 600;
+
+            var title = d3.select("body")
+                    .append("p")
+                    .text("2. Total LOC ADDED for different countries in top 100 contributors who has location information")
+                    .style("color", "black");
+            var svg = d3.select("body")
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height);
+
+            var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+            var color = d3.scaleOrdinal(["#74F590", "#F56464", "#64BCF5"]);
+            g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + (height/2) + ")");
+
+            var pie = d3.pie()
+                .sort(null)
+                .value(function(d) { return d.value; });
+            var radius = 250
+            var path = d3.arc()
+                .outerRadius(radius)
+                .innerRadius(20);
+
+            var path0 = d3.arc()
+                .outerRadius(radius+10)
+                .innerRadius(35);
+
+            var label = d3.arc()
+                .outerRadius(radius - 20)
+                .innerRadius(radius - 20);
+
+            var label0 = d3.arc()
+                .outerRadius(radius + 20)
+                .innerRadius(radius + 20);
 
 
+            var data = [
+                {"area":"USA","value": USA_loc[0]},
+                {"area":"UK", "value": UK_loc[0]},
+                {"area":"Canada", "value":Canada_loc[0]},
+                {"area":"Germany","value":Germany_loc[0]},
+                {"area":"Swiss","value":Swiss_loc[0]},
+                {"area":"France","value":France_loc[0]}
+            ];
 
+
+            var arc = g.selectAll(".arc")
+                .data(pie(data))
+                .enter().append("g")
+                .attr("class", "arc");
+
+            arc.on("mouseover",function(d,i){
+                d3.select(this).select("path")
+                .attr("d",path0);
+            tooltip
+                .style("left", d3.event.pageX - 50 + "px")
+                .style("top", d3.event.pageY - 70 + "px")
+                .style("display", "inline-block")
+                .html(
+                    "<div>"+(d.data.area) +"</div>"+
+                    "<div class='clearfix'><div class='pull-left toolTipCircle circle1'></div><div class='pull-left'>"+"LOC ADDED："+(d.value)+"</div></div>"
+                );
+            });
+
+            arc.on("mouseout",function(d,i){
+                d3.select(this).select("path")
+                .attr("d",path);
+                tooltip.style("display", "none");
+            });
+
+            arc.append("path")
+                .attr("d", path)
+                .attr("fill", function(d) { return color(d.data.area); });
+
+            arc.append("text")
+                .attr("transform", function(d) {
+                    var x2 =label0.centroid(d)[0];
+                    var y2 =label0.centroid(d)[1];
+                    var x3 = x2<0?x2-70:x2+30;
+                    return "translate(" + x3 + "," + y2 + ")";
+                })
+                .attr("dy", "0.3em")
+                .text(function(d) { return d.data.area; });
+
+            arc.append("polyline")
+                .attr("points",function(d){
+                    var x1 =label.centroid(d)[0];
+                    var y1 =label.centroid(d)[1];
+                    var x2 =label0.centroid(d)[0];
+                    var y2 =label0.centroid(d)[1];
+                    var x3 = x2<0?x2-30:x2+30;
+                    return x3+","+y2+" "+x2+","+y2+" "+x1+","+y1;
+                })
+                .style("fill","none")
+                .style("stroke","rgb(99,99,99)")
+                .style("stroke-width","2")
+	
+        }
+
+        function display_piechart_loc_d(){
+        
+            var width = 600;
+            var height = 600;
+
+            var title = d3.select("body")
+                    .append("p")
+                    .text("3. Total LOC DELETED for different countries in top 100 contributors who has location information")
+                    .style("color", "black");
+            var svg = d3.select("body")
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height);
+
+            var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+            var color = d3.scaleOrdinal(["#74F590", "#F56464", "#64BCF5"]);
+            g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + (height/2) + ")");
+
+            var pie = d3.pie()
+                .sort(null)
+                .value(function(d) { return d.value; });
+            var radius = 250
+            var path = d3.arc()
+                .outerRadius(radius)
+                .innerRadius(20);
+
+            var path0 = d3.arc()
+                .outerRadius(radius+10)
+                .innerRadius(35);
+
+            var label = d3.arc()
+                .outerRadius(radius - 20)
+                .innerRadius(radius - 20);
+
+            var label0 = d3.arc()
+                .outerRadius(radius + 20)
+                .innerRadius(radius + 20);
+
+
+            var data = [
+                {"area":"UK, Canada, Germany and France", "value": UK_loc[1] + Canada_loc[1] + Germany_loc[1] + France_loc[1]},
+                {"area":"USA","value": USA_loc[1]},
+                
+                {"area":"Swiss","value":Swiss_loc[1]},
+                
+            ];
+
+
+            var arc = g.selectAll(".arc")
+                .data(pie(data))
+                .enter().append("g")
+                .attr("class", "arc");
+
+            arc.on("mouseover",function(d,i){
+                d3.select(this).select("path")
+                .attr("d",path0);
+            tooltip
+                .style("left", d3.event.pageX - 50 + "px")
+                .style("top", d3.event.pageY - 70 + "px")
+                .style("display", "inline-block")
+                .html(
+                    "<div>"+(d.data.area) +"</div>"+
+                    "<div class='clearfix'><div class='pull-left toolTipCircle circle1'></div><div class='pull-left'>"+"LOC DELETED："+(d.value)+"</div></div>"
+                );
+            });
+
+            arc.on("mouseout",function(d,i){
+                d3.select(this).select("path")
+                .attr("d",path);
+                tooltip.style("display", "none");
+            });
+
+            arc.append("path")
+                .attr("d", path)
+                .attr("fill", function(d) { return color(d.data.area); });
+
+            arc.append("text")
+                .attr("transform", function(d) {
+                    var x2 =label0.centroid(d)[0];
+                    var y2 =label0.centroid(d)[1];
+                    var x3 = x2<0?x2-70:x2+30;
+                    return "translate(" + x3 + "," + y2 + ")";
+                })
+                .attr("dy", "0.3em")
+                .text(function(d) { return d.data.area; });
+
+            arc.append("polyline")
+                .attr("points",function(d){
+                    var x1 =label.centroid(d)[0];
+                    var y1 =label.centroid(d)[1];
+                    var x2 =label0.centroid(d)[0];
+                    var y2 =label0.centroid(d)[1];
+                    var x3 = x2<0?x2-30:x2+30;
+                    return x3+","+y2+" "+x2+","+y2+" "+x1+","+y1;
+                })
+                .style("fill","none")
+                .style("stroke","rgb(99,99,99)")
+                .style("stroke-width","2")
+	
         }
 
         function SelectFile()

@@ -54,49 +54,6 @@
 
     }
 
-   
-
-    /*async function getIssues() {
-        clear();
-
-        //https://api.github.com/repos/username/repo-name/issues
-        const url_open = "https://api.github.com/search/issues?q=repo:google-research/google-research type:issue state:open"
-        const url_closed = "https://api.github.com/search/issues?q=repo:google-research/google-research type:issue state:closed"
-
-        const response_open = await fetch(url_open);
-        const result_open = await response_open.json();
-
-        
-        const response_closed = await fetch(url_closed);
-        const result_closed = await response_closed.json();
-
-        const open_count = document.createElement("p")
-        open_count.innerHTML = "Opened issues count:";
-        divResult.appendChild(open_count)
-        const total_count_open = result_open.total_count;
-
-
-        const display_total_count_open = document.createElement("p");
-        display_total_count_open.innerHTML = total_count_open;
-        divResult.appendChild(display_total_count_open);
-
-        const closed_count = document.createElement("p")
-        closed_count.innerHTML = "Closed issues count:";
-        divResult.appendChild(closed_count)
-        const total_count_closed = result_closed.total_count;
-
-        const display_total_count_closed = document.createElement("p");
-        display_total_count_closed.innerHTML = total_count_closed;
-        divResult.appendChild(display_total_count_closed);
-
-    
-        const save_issue_count = document.createElement("button")
-        divResult.appendChild(save_issue_count); 
-        save_issue_count.textContent = "Save issues"
-        save_issue_count.onclick = function(){
-            saveHandler(total_count_open,total_count_closed);
-        }
-    }*/
 
     //https://api.github.com/search/commits?q=repo:google-research/google-research
 
@@ -161,10 +118,6 @@
 
     }
 
-     
-
-
-
     async function getCollaborators() {
         clear();
         const url = "https://api.github.com/repos/google-research/google-research/stats/contributors"
@@ -193,18 +146,6 @@
             saveHandler_user(datas);
         }
 
-
-        /*result.forEach(i=>{
-
-            const authorname_name = document.createElement("span")
-            authorname_name.innerHTML = i.author.login;
-            divResult.appendChild(authorname_name)
-            const anchor = document.createElement("a")
-            anchor.href = i.author.html_url;
-            anchor.textContent = i.author.login;
-            divResult.appendChild(anchor)
-            divResult.appendChild(document.createElement("br"))
-        })*/
 
         const table = document.createElement("table")
         table.border = 1
@@ -235,15 +176,12 @@
         
         for ( var j = result.length-1; j > -1 ; j--){
             const i = result[j]
-            //const authorname_name = document.createElement("span")
             const rank = 100 - j
-            //authorname_name.innerHTML = rank + "&nbsp;" + i.author.login + "&nbsp;";
-
+        
             const tr_infor = document.createElement("tr")
             table.appendChild(tr_infor);
             const td1 = document.createElement("td")
             tr_infor.appendChild(td1)
-            //td1.align = "middle";
             td1.innerHTML = rank + "&nbsp;" + i.author.login + "&nbsp;";
             const td2 = document.createElement("td")
             td2.align = "middle";
@@ -277,16 +215,13 @@
             }
             td5.innerHTML = loc_delete;
 
-
-            
- 
-		var data = {};
-		data["Login_name"] = i.author.login;
-		data["Commits_count"] = i.total;
-		data["LOC_added"] = loc_add;
-        data["LOC_deleted"] = loc_delete;
-        getUsers(i.author.login, data)
-		datas.push(data);
+		    var data = {};
+		    data["Login_name"] = i.author.login;
+		    data["Commits_count"] = i.total;
+		    data["LOC_added"] = loc_add;
+            data["LOC_deleted"] = loc_delete;
+            getUsers(i.author.login, data)
+		    datas.push(data);
 
         }
 
