@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Using d3 to show data</title>  
+    <script src="https://d3js.org/d3.v5.min.js"></script>
 </head>
 <body>
     <h1>D3 visualization for google-research/google-research repository</h1>
@@ -10,7 +11,7 @@
     <div>
         <!--<input type="file" id="files" name="Select file"/>-->
         <input type="file" name="select_file" id="files" style="visibility:hidden;"><br>
-        <input type="button" onclick="SelectFile()" value="Select file">
+        <input type="button" onclick="SelectFile()" value="Select file"><br><br><br>
 
     </div>
 
@@ -74,7 +75,97 @@
                 }
             }
 
+            display_piechart_country();
 
+
+
+        }
+
+        function display_piechart_country(){
+            var USA_count = USA.length;
+            var UK_count = UK.length;
+            var Canada_count = Canada.length;
+            var Germany_count = Germany.length;
+            var Swiss_count = Swiss.length;
+            var France_count = France.length;
+
+            var width = 400;
+            var height = 400;
+            var dataset = [USA_count,UK_count,Canada_count,Germany_count,Swiss_count,France_count];
+            var country_nameset = ["USA","UK","Canada","Germany","Swiss","France"];
+
+            var svg = d3.select("body")
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height);
+		
+		    var pie = d3.pie();
+		    var piedata = pie(dataset);
+		
+		    var outerRadius = 200;	
+		    var innerRadius = 100;	
+
+		    var arc = d3.arc()	
+				.innerRadius(innerRadius)	
+				.outerRadius(outerRadius);	
+		
+		    //var color = d3.schemeCategory10();
+            var color = d3.scaleLinear([0,4], ["brown", "steelblue"]);
+            /*var color = d3.scaleLinear(
+                [0,5], ["#F5821F", "#79CED7", "#7b6888", "#6b486b", "#8a89a6","#a05d56"]
+
+            );*/
+            //var color=d3.category10();
+		
+		    var arcs = svg.selectAll("g")
+				.data(piedata)
+				.enter()
+				.append("g")
+				.attr("transform","translate("+ (width/2) +","+ (width/2) +")");
+					  
+		    arcs.append("path")
+			    .attr("fill",function(d,i){
+				return color(i);
+			})
+			    .attr("d",function(d){
+				return arc(d);
+			});
+		
+		    arcs.append("text")
+			    .attr("transform",function(d){
+				return "translate(" + arc.centroid(d) + ")";
+			})
+			    .attr("text-anchor","middle")
+			    .text(function(d,i){
+				return country_nameset[i] + ": " + d.data;
+			});
+		 
+
+
+            /*var width = 300;  
+            var height = 300;   
+
+            var svg = d3.select("body")    
+                .append("svg")          
+                .attr("width", width)       
+                .attr("height", height);    
+
+            var dataset = [ 250 , 210 , 170 , 130 , 90 ];
+            var rectHeight = 25;   //每个矩形所占的像素高度(包括空白)
+                svg.selectAll("rect")
+                .data(dataset)
+                .enter()
+                .append("rect")
+                .attr("x",20)
+                .attr("y",function(d,i){
+                    return i * rectHeight;
+                })
+                .attr("width",function(d){
+                    return d;
+                })
+                .attr("height",rectHeight-2)
+                .attr("fill","steelblue");
+            */
 
         }
 
