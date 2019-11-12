@@ -29,7 +29,8 @@ There are three functions in demo file
 
 -------
 
-## About the jsWay.html file and Showdata.html file
+## About the jsWay.html file and Showdata.html file  
+#### (1).jsWay.html
 >1.getRepos  
 >>Get the url to the "google-research" repository  
 
@@ -46,3 +47,16 @@ There are three functions in demo file
 >>However, according to data of 100 available contributors, a great amount of them only have single commit, so the contribution of the rest 8 members could be ingonred to some extent  
 >>The way I manipulate them is by getting the locatin value if it's not null  
 >>In this repository, only 46 people wrote their location and I combined them using countries.  
+
+#### (2).Showdata.html  
+>1.load "Save_users" 
+>>Three pie charts would show up after load the "Save_users.json"  
+>>>①The pie chart would show the distribution of countries in the top 100 contributors(ranked by the number of commits) who has location information  
+>>>②The pie chart would show the number of loc added from different countries within top 100 contributors who has location information  
+>>>③The pie chart would show the number of loc deleted from different countries within top 100 contributors who has location information  
+
+>2.load "Save_commits"  
+>>empty now  
+
+>3.load "Save_code_frequency"  
+>>empty now
