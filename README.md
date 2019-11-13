@@ -25,7 +25,9 @@ There are three functions in demo file
 >>The button "Save issues" can save the data collected into a json file ('Save_issues_count(demo).json')
 
 >3.getCommits  
->>Get all the commits, it would display 30 records in one page as well as the buttons leading to the other pages to view the rest of the commits
+>>Get all the commits, it would display 30 records in one page as well as the buttons leading to the other pages to view the rest of the commits  
+
+
 
 -------
 
@@ -47,6 +49,11 @@ There are three functions in demo file
 >>However, according to data of 100 available contributors, a great amount of them only have single commit, so the contribution of the rest 8 members could be ingonred to some extent  
 >>The way I manipulate them is by getting the locatin value if it's not null  
 >>In this repository, only 46 people wrote their location and I combined them using countries.  
+
+
+>4.Code frequency  
+>>Get the weekly loc addition and deletion count  
+>>Can save these data by clicking the save button showing up after clicking "Code frequency"  
 
 #### (2).Showdata.html  
 >1.load "Save_users" 
