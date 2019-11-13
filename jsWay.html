@@ -187,10 +187,18 @@
         divResult.appendChild(document.createElement("br"));
         const saveCode_btn = document.createElement("button");
         saveCode_btn.textContent = "Click to save the code frequency info";
-        saveCode_btn.addEventListener("click",save_code(result));
+        saveCode_btn.onclick =  function(){
+            save_code(result);
+        }
         divResult.appendChild(saveCode_btn)
         divResult.appendChild(document.createElement("br"));
         divResult.appendChild(document.createElement("br"));
+
+        for ( var i = 0 ; i < result.length ; i ++){
+            const code_fre = document.createElement("p");
+            code_fre.innerHTML = "Week " + (i+1) + ": " + "LOC ADDED: " + result[i][1] +" LOC DELETED: " + result[i][2]
+            divResult.appendChild(code_fre);
+        }
 
     }
 

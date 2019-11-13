@@ -8,11 +8,20 @@
 <body>
     <h1>D3 visualization for google-research/google-research repository</h1>
 
-    <div>
-        <input type="file" name="select_file" id="files" style="visibility:hidden;"><br>
-        <input type="button" onclick="SelectFile()" value="Select file"><br><br><br>
+    <div id="buttons">
+        <input type="file" name="select_file" id="files1" style="visibility:hidden;"><br>
+        <input type="button" onclick="SelectFile1()" value="load the file Save_users.json"><br>
 
+        <input type="file" name="select_file" id="files2" style="visibility:hidden;"><br>
+        <input type="button" onclick="SelectFile2()" value="load the file Save_commits.json"><br>
+
+        <input type="file" name="select_file" id="files3" style="visibility:hidden;"><br>
+        <input type="button" onclick="SelectFile3()" value="load the file Save_code_frequency.json"><br>
     </div>
+
+    <div id="display_user"></div>
+    <div id="display_commits"></div>
+    <div id="display_code_frequency"></div>
 
 
     <script>
@@ -35,7 +44,10 @@
         var Swiss_loc = new Array();
         var France_loc = new Array();
 
-        function filter_data(){
+        var weekly_add = new Array();
+        var weekly_delete = new Array();
+
+        function filter_data_user(){
             for ( var i = 0; i < datas.length ; i++){
                 if(datas[i].location != null){
                     valid_user[valid_count] = datas[i];
@@ -93,12 +105,39 @@
                 }
             }
 
+            clear();
             display_piechart_country();
             display_piechart_loc_a();
             display_piechart_loc_d();
 
 
 
+        }
+
+        function filter_data_code_frequency(){
+            clear();
+            const code_frequency_result = datas
+            
+            for ( var i  = 0 ; i < code_frequency_result.length ; i++){
+                weekly_add.push(code_frequency_result[i][1]);
+                weekly_delete.push(code_frequency_result[i][2]);
+            }
+
+            display_barchart_code_frequency();
+        }
+
+        function display_barchart_code_frequency(){
+
+            
+        }
+
+        function filter_data_commits(){
+            clear();
+        }
+
+        function display_barchart_commits(){
+
+            
         }
 
 
@@ -115,15 +154,17 @@
             var height = 600;
 
             var title = d3.select("body")
+                    .select("#display_user")
                     .append("p")
                     .text("1. Total Commits compare for different countries in top 100 contributors who has location information")
                     .style("color", "black");
             var svg = d3.select("body")
+                    .select("#display_user")
 					.append("svg")
 					.attr("width", width)
 					.attr("height", height);
 
-            var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+            var tooltip = d3.select("body").select("#display_user").append("div").attr("class", "toolTip");
 
             var color = d3.scaleOrdinal(["#74F590", "#F56464", "#64BCF5"]);
             g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + (height/2) + ")");
@@ -218,15 +259,17 @@
             var height = 600;
 
             var title = d3.select("body")
+                    .select("#display_user")
                     .append("p")
                     .text("2. Total LOC ADDED for different countries in top 100 contributors who has location information")
                     .style("color", "black");
             var svg = d3.select("body")
+                    .select("#display_user")
 					.append("svg")
 					.attr("width", width)
 					.attr("height", height);
 
-            var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+            var tooltip = d3.select("body").select("#display_user").append("div").attr("class", "toolTip");
 
             var color = d3.scaleOrdinal(["#74F590", "#F56464", "#64BCF5"]);
             g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + (height/2) + ")");
@@ -321,15 +364,17 @@
             var height = 600;
 
             var title = d3.select("body")
+                    .select("#display_user")
                     .append("p")
                     .text("3. Total LOC DELETED for different countries in top 100 contributors who has location information")
                     .style("color", "black");
             var svg = d3.select("body")
+                    .select("#display_user")
 					.append("svg")
 					.attr("width", width)
 					.attr("height", height);
 
-            var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+            var tooltip = d3.select("body").select("#display_user").append("div").attr("class", "toolTip");
 
             var color = d3.scaleOrdinal(["#74F590", "#F56464", "#64BCF5"]);
             g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + (height/2) + ")");
@@ -417,16 +462,31 @@
 	
         }
 
-        function SelectFile()
-        {
-            files.click();
+
+        function clear(){
+            while(display_user.firstChild){ 
+                display_user.removeChild(display_user.firstChild)
+            }
+
+            while(display_commits.firstChild){ 
+                display_commits.removeChild(display_commits.firstChild)
+            }
+
+            while(display_code_frequency.firstChild){ 
+                display_code_frequency.removeChild(display_code_frequency.firstChild)
+            }
         }
 
-        var inputElement = document.getElementById("files");
-        inputElement.addEventListener("change", handleFiles, false);
+        function SelectFile1()
+        {
+            files1.click();
+        }
 
-        function handleFiles() {
-            var selectedFile = document.getElementById("files").files[0];// get the file read object
+        var inputElement = document.getElementById("files1");
+        inputElement.addEventListener("change", handleFiles1, false);
+
+        function handleFiles1() {
+            var selectedFile = document.getElementById("files1").files[0];// get the file read object
             var name = selectedFile.name;
             var size = selectedFile.size;
             var reader = new FileReader();
@@ -436,7 +496,59 @@
             reader.onload = function(){
                 let json = JSON.parse(this.result);
                 datas = json;
-                filter_data();
+                filter_data_user();
+                return;
+                
+            }; 
+            reader.readAsText(selectedFile);        
+        }
+
+        function SelectFile2()
+        {
+            files2.click();
+        }
+
+        var inputElement = document.getElementById("files2");
+        inputElement.addEventListener("change", handleFiles2, false);
+
+        function handleFiles2() {
+            var selectedFile = document.getElementById("files2").files[0];// get the file read object
+            var name = selectedFile.name;
+            var size = selectedFile.size;
+            var reader = new FileReader();
+            
+            
+            var data_length;
+            reader.onload = function(){
+                let json = JSON.parse(this.result);
+                datas = json;
+                filter_data_commits();
+                return;
+                
+            }; 
+            reader.readAsText(selectedFile);        
+        }
+
+        function SelectFile3()
+        {
+            files3.click();
+        }
+
+        var inputElement = document.getElementById("files3");
+        inputElement.addEventListener("change", handleFiles3, false);
+
+        function handleFiles3() {
+            var selectedFile = document.getElementById("files3").files[0];// get the file read object
+            var name = selectedFile.name;
+            var size = selectedFile.size;
+            var reader = new FileReader();
+            
+            
+            var data_length;
+            reader.onload = function(){
+                let json = JSON.parse(this.result);
+                datas = json;
+                filter_data_code_frequency();
                 return;
                 
             }; 
