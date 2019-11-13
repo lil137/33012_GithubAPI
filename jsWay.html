@@ -15,6 +15,7 @@
     <!--<button id = 'btnIssues'>Issues</button>-->
     <button id = 'btnCommits'>Commits</button>
     <button id = 'btnCollaborators'>Collaborators</button>
+    <button id = 'btnCode'>Code frequency</button>
 
     <div id = 'divResult'>
 
@@ -25,12 +26,14 @@
     //const btnIssues = document.getElementById("btnIssues")
     const btnCommits = document.getElementById("btnCommits")
     const btnCollaborators = document.getElementById("btnCollaborators")
+    const btnCode = document.getElementById("btnCode");
     const divResult = document.getElementById("divResult")
     
     btnRepos.addEventListener("click", getRepos)
     //btnIssues.addEventListener("click", getIssues)
     btnCollaborators.addEventListener("click", getCollaborators)
     btnCommits.addEventListener("click", e=> getCommits())
+    btnCode.addEventListener("click", getCode)
 
 
     
@@ -57,8 +60,16 @@
 
     //https://api.github.com/search/commits?q=repo:google-research/google-research
 
+
     async function getCommits(url="https://api.github.com/repos/google-research/google-research/commits") {
         clear();
+        divResult.appendChild(document.createElement("br"));
+        const saveCommits_btn = document.createElement("button");
+        saveCommits_btn.textContent = "Click to save the commits info";
+        saveCommits_btn.addEventListener("click",save_commits);
+        divResult.appendChild(saveCommits_btn);
+        divResult.appendChild(document.createElement("br"));
+        divResult.appendChild(document.createElement("br"));
         
         const headers = {
             "Accept" : "application/vnd.github.cloak-preview"
@@ -69,7 +80,10 @@
         })
     
         const link = response.headers.get("link")
+        
         const links = link.split(",")
+        //"<https://api.github.com/repositories/151619717/commits?page=2>; rel="next""
+        //"<https://api.github.com/repositories/151619717/commits?page=16>; rel="last""
         const urls = links.map(a=> {
             return {
                 url: a.split(";")[0].replace(">","").replace("<",""),
@@ -97,7 +111,7 @@
 
         urls.forEach(u => {
             const btn = document.createElement("button")
-            btn.textContent = u.title;
+            btn.textContent = u.title.substr(5);
             btn.addEventListener("click", e=> getCommits(u.url))
             divResult.appendChild(btn);
 
@@ -106,6 +120,52 @@
             divResult.appendChild(space)
         })
 
+    }
+
+    async function save_commits() {
+        
+        const url="https://api.github.com/repos/google-research/google-research/commits";      
+        const headers = {
+            "Accept" : "application/vnd.github.cloak-preview"
+        }
+        const response = await fetch(url, {
+            "method" : "GET",
+            "headers" : headers
+        })
+    
+        const link = response.headers.get("link")
+        
+        const links = link.split(",")
+        const page_start = links[1].indexOf("page") + 5
+        const page_end = links[1].indexOf(">") 
+        var page_count = parseInt(links[1].substring(page_start, page_end));
+        //"<https://api.github.com/repositories/151619717/commits?page=2>; rel="next""
+        //"<https://api.github.com/repositories/151619717/commits?page=16>; rel="last""
+
+        var commits_record = new Array();
+    
+        for (var i = 0; i < page_count ; i++){
+            var page_add = (i+1).toString();
+            var each_url = "https://api.github.com/repos/google-research/google-research/commits?page=" + page_add;
+            const infor_header = {
+                "Accept" : "application/vnd.github.cloak-preview"
+            }
+
+            const infor_response = await fetch(each_url, {
+                "method" : "GET",
+                "headers" : infor_header
+            })
+
+            const infor_result = await infor_response.json()
+            for (var j = 0; j < infor_result.length; j++){
+                var date =infor_result[j].commit.committer.date;
+                commits_record.push(date);
+            }
+       
+
+        }
+
+        saveHandler_commits(commits_record);
     }
 
     async function getUsers(Username,data){
@@ -117,6 +177,28 @@
         data["location"] = result.location;
 
     }
+
+    async function getCode(){
+        const url = "https://api.github.com/repos/google-research/google-research/stats/code_frequency";
+        const response = await fetch(url)
+        const result = await response.json()
+
+        clear();
+        divResult.appendChild(document.createElement("br"));
+        const saveCode_btn = document.createElement("button");
+        saveCode_btn.textContent = "Click to save the code frequency info";
+        saveCode_btn.addEventListener("click",save_code(result));
+        divResult.appendChild(saveCode_btn)
+        divResult.appendChild(document.createElement("br"));
+        divResult.appendChild(document.createElement("br"));
+
+    }
+
+    function save_code(result){
+        saveHandler_code(result);
+    }
+
+   
 
     async function getCollaborators() {
         clear();
@@ -252,6 +334,18 @@
            var content = JSON.stringify(datas);
            var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
            saveAs(blob, "Save_users.json");
+       }
+
+       function saveHandler_commits(datas){
+           var content = JSON.stringify(datas);
+           var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+           saveAs(blob, "Save_commits.json");
+       }
+
+       function saveHandler_code(datas){
+           var content = JSON.stringify(datas);
+           var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+           saveAs(blob, "Save_code_frequency.json");
        }
     </script>
 </body>
