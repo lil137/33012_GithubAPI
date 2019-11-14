@@ -47,6 +47,36 @@
         var weekly_add = new Array();
         var weekly_delete = new Array();
 
+        var commit_time = new Array();
+
+        var _0_2_1 = 0;
+        var _1_2_2 = 0;
+        var _2_2_3 = 0;
+        var _3_2_4 = 0;
+        var _4_2_5 = 0;
+        var _5_2_6 = 0;
+        var _6_2_7 = 0;
+        var _7_2_8 = 0;
+        var _8_2_9 = 0;
+        var _9_2_10 = 0;
+        var _10_2_11 = 0;
+        var _11_2_12 = 0;
+        var _12_2_13 = 0;
+        var _13_2_14 = 0;
+        var _14_2_15 = 0;
+        var _15_2_16 = 0;
+        var _16_2_17 = 0;
+        var _17_2_18 = 0;
+        var _18_2_19 = 0;
+        var _19_2_20 = 0;
+        var _20_2_21 = 0;
+        var _21_2_22 = 0;
+        var _22_2_23 = 0;
+        var _23_2_24 = 0;
+
+
+        
+
         function filter_data_user(){
             for ( var i = 0; i < datas.length ; i++){
                 if(datas[i].location != null){
@@ -120,19 +150,26 @@
             
             for ( var i  = 0 ; i < code_frequency_result.length ; i++){
                 weekly_add.push(code_frequency_result[i][1]);
-                weekly_delete.push(code_frequency_result[i][2]);
+                weekly_delete.push(Math.abs(code_frequency_result[i][2]));
             }
 
-            display_barchart_code_frequency();
+            const title = document.createElement("h1")
+            title.innerHTML = "The number of loc added since the first week"
+            display_code_frequency.appendChild(title)
+            display_barchart_code_frequency(weekly_add);
+
+            display_code_frequency.appendChild(document.createElement("hr"))
+            const title1 = document.createElement("h1")
+            title1.innerHTML = "The number of loc deleted since the first week"
+            display_code_frequency.appendChild(title1)
+            display_barchart_code_frequency(weekly_delete);
         }
 
-        function display_barchart_code_frequency(){
+        function display_barchart_code_frequency(dataset){
 	        var width = 1400;
 	        var height = 700;
 
-            const title = document.createElement("p")
-            title.innerHTML = "The number of loc added since the first week"
-            display_code_frequency.appendChild(title)
+            
 
 	        var svg = d3.select("body")
                 .select("#display_code_frequency")
@@ -142,7 +179,7 @@
 
 	        var padding = {left:50, right:30, top:20, bottom:20};
 
-            var dataset = weekly_add;
+            //var dataset = weekly_add;
 	        var xScale = d3.scaleBand()
 		        .domain(d3.range(dataset.length))
 		        .range([0, width - padding.left - padding.right]);
@@ -209,12 +246,295 @@
 
         function filter_data_commits(){
             clear();
-        }
+            const raw_commit_time = datas;
+            for ( var i = 0; i < raw_commit_time.length ; i++){
+                var time = raw_commit_time[i].substr(11,8)
+                commit_time.push(time);
+                var hours = parseInt(time.substr(0,2));
+                if( hours == 0){
+                    _0_2_1++;
+                }else if( hours == 1){
+                    _1_2_2++;
+                }else if( hours == 2){
+                    _2_2_3++;
+                }else if( hours == 3){
+                    _3_2_4++;
+                }else if( hours == 4){
+                    _4_2_5++;
+                }else if( hours == 5){
+                    _5_2_6++;
+                }else if( hours == 6){
+                    _6_2_7++;
+                }else if( hours == 7){
+                    _7_2_8++;
+                }else if( hours == 8){
+                    _8_2_9++;
+                }else if( hours == 9){
+                    _9_2_10++;
+                }else if( hours == 10){
+                    _10_2_11++;
+                }else if( hours == 11){
+                    _11_2_12++;
+                }else if( hours == 12){
+                    _12_2_13++;
+                }else if( hours == 13){
+                    _13_2_14++;
+                }else if( hours == 14){
+                    _14_2_15++;
+                }else if( hours == 15){
+                    _15_2_16++;
+                }else if( hours == 16){
+                    _16_2_17++;
+                }else if( hours == 17){
+                    _17_2_18++;
+                }else if( hours == 18){
+                    _18_2_19++;
+                }else if( hours == 19){
+                    _19_2_20++;
+                }else if( hours == 20){
+                    _20_2_21++;
+                }else if( hours == 21){
+                    _21_2_22++;
+                }else if( hours == 22){
+                    _22_2_23++;
+                }else if( hours == 23){
+                    _23_2_24++;
+                }
 
-        function display_barchart_commits(){
-
+            }
             
+            display_piechart_commits();
+
         }
+
+        function display_piechart_commits(){
+
+            var width = 800;
+            var height = 700;
+
+            var title = d3.select("body")
+                    .select("#display_commits")
+                    .append("h1")
+                    .text("Commits time distribution")
+                    .style("color", "black");
+            var svg = d3.select("body")
+                    .select("#display_commits")
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height);
+
+            var tooltip = d3.select("body").select("#display_commits").append("div").attr("class", "toolTip");
+
+            var color = d3.scaleOrdinal(["#74F590", "#F56464", "#64BCF5"]);
+            g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + (height/2) + ")");
+
+            var pie = d3.pie()
+                .sort(null)
+                .value(function(d) { return d.value; });
+            var radius = 250
+            var path = d3.arc()
+                .outerRadius(radius)
+                .innerRadius(20);
+
+            var path0 = d3.arc()
+                .outerRadius(radius+10)
+                .innerRadius(35);
+
+            var label = d3.arc()
+                .outerRadius(radius - 20)
+                .innerRadius(radius - 20);
+
+            var label0 = d3.arc()
+                .outerRadius(radius + 20)
+                .innerRadius(radius + 20);
+
+
+            var data = [
+                {"area":"0-1","value": _0_2_1},
+                {"area":"1-2", "value": _1_2_2},
+                {"area":"2-3", "value":_2_2_3},
+                {"area":"3-4","value":_3_2_4},
+                {"area":"4-5","value":_4_2_5},
+                {"area":"5-6","value":_5_2_6},
+                {"area":"6-7","value": _6_2_7},
+                {"area":"7-8", "value": _7_2_8},
+                {"area":"8-9", "value":_8_2_9},
+                {"area":"9-10","value":_9_2_10},
+                {"area":"10-11","value":_10_2_11},
+                {"area":"11-12","value":_11_2_12},
+                {"area":"12-13","value": _12_2_13},
+                {"area":"13-14", "value": _13_2_14},
+                {"area":"14-15", "value":_14_2_15},
+                {"area":"15-16","value":_15_2_16},
+                {"area":"16-17","value":_16_2_17},
+                {"area":"17-18","value":_17_2_18},
+                {"area":"18-19","value": _18_2_19},
+                {"area":"19-20", "value": _19_2_20},
+                {"area":"20-21", "value":_20_2_21},
+                {"area":"21-22","value":_21_2_22},
+                {"area":"22-23","value":_22_2_23},
+                {"area":"23-24","value":_23_2_24}
+            ];
+
+
+            var arc = g.selectAll(".arc")
+                .data(pie(data))
+                .enter().append("g")
+                .attr("class", "arc");
+
+            arc.on("mouseover",function(d,i){
+                d3.select(this).select("path")
+                .attr("d",path0);
+            tooltip
+                .style("left", d3.event.pageX - 50 + "px")
+                .style("top", d3.event.pageY - 70 + "px")
+                .style("display", "inline-block")
+                .html(
+                    "<div>"+(d.data.area) +"</div>"+
+                    "<div class='clearfix'><div class='pull-left toolTipCircle circle1'></div><div class='pull-left'>"+"Commits count："+(d.value)+"</div></div>"
+                );
+            });
+
+            arc.on("mouseout",function(d,i){
+                d3.select(this).select("path")
+                .attr("d",path);
+                tooltip.style("display", "none");
+            });
+
+            arc.append("path")
+                .attr("d", path)
+                .attr("fill", function(d) { return color(d.data.area); });
+
+            arc.append("text")
+                .attr("transform", function(d) {
+                    var x2 =label0.centroid(d)[0];
+                    var y2 =label0.centroid(d)[1];
+                    var x3 = x2<0?x2-70:x2+30;
+                    return "translate(" + x3 + "," + y2 + ")";
+                })
+                .attr("dy", "0.3em")
+                .text(function(d) { return d.data.area; });
+
+            arc.append("polyline")
+                .attr("points",function(d){
+                    var x1 =label.centroid(d)[0];
+                    var y1 =label.centroid(d)[1];
+                    var x2 =label0.centroid(d)[0];
+                    var y2 =label0.centroid(d)[1];
+                    var x3 = x2<0?x2-30:x2+30;
+                    return x3+","+y2+" "+x2+","+y2+" "+x1+","+y1;
+                })
+                .style("fill","none")
+                .style("stroke","rgb(99,99,99)")
+                .style("stroke-width","2")
+		
+        }
+
+        function display_piechart_loc_a(){
+
+            var width = 700;
+            var height = 600;
+
+            var title = d3.select("body")
+                    .select("#display_user")
+                    .append("p")
+                    .text("2. Total LOC ADDED for different countries in top 100 contributors who has location information")
+                    .style("color", "black");
+            var svg = d3.select("body")
+                    .select("#display_user")
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height);
+
+            var tooltip = d3.select("body").select("#display_user").append("div").attr("class", "toolTip");
+
+            var color = d3.scaleOrdinal(["#74F590", "#F56464", "#64BCF5"]);
+            g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + (height/2) + ")");
+
+            var pie = d3.pie()
+                .sort(null)
+                .value(function(d) { return d.value; });
+            var radius = 250
+            var path = d3.arc()
+                .outerRadius(radius)
+                .innerRadius(20);
+
+            var path0 = d3.arc()
+                .outerRadius(radius+10)
+                .innerRadius(35);
+
+            var label = d3.arc()
+                .outerRadius(radius - 20)
+                .innerRadius(radius - 20);
+
+            var label0 = d3.arc()
+                .outerRadius(radius + 20)
+                .innerRadius(radius + 20);
+
+
+            var data = [
+                {"area":"USA","value": USA_loc[0]},
+                {"area":"UK", "value": UK_loc[0]},
+                {"area":"Canada", "value":Canada_loc[0]},
+                {"area":"Germany","value":Germany_loc[0]},
+                {"area":"Swiss","value":Swiss_loc[0]},
+                {"area":"France","value":France_loc[0]}
+            ];
+
+
+            var arc = g.selectAll(".arc")
+                .data(pie(data))
+                .enter().append("g")
+                .attr("class", "arc");
+
+            arc.on("mouseover",function(d,i){
+                d3.select(this).select("path")
+                .attr("d",path0);
+            tooltip
+                .style("left", d3.event.pageX - 50 + "px")
+                .style("top", d3.event.pageY - 70 + "px")
+                .style("display", "inline-block")
+                .html(
+                    "<div>"+(d.data.area) +"</div>"+
+                    "<div class='clearfix'><div class='pull-left toolTipCircle circle1'></div><div class='pull-left'>"+"LOC ADDED："+(d.value)+"</div></div>"
+                );
+            });
+
+            arc.on("mouseout",function(d,i){
+                d3.select(this).select("path")
+                .attr("d",path);
+                tooltip.style("display", "none");
+            });
+
+            arc.append("path")
+                .attr("d", path)
+                .attr("fill", function(d) { return color(d.data.area); });
+
+            arc.append("text")
+                .attr("transform", function(d) {
+                    var x2 =label0.centroid(d)[0];
+                    var y2 =label0.centroid(d)[1];
+                    var x3 = x2<0?x2-70:x2+30;
+                    return "translate(" + x3 + "," + y2 + ")";
+                })
+                .attr("dy", "0.3em")
+                .text(function(d) { return d.data.area; });
+
+            arc.append("polyline")
+                .attr("points",function(d){
+                    var x1 =label.centroid(d)[0];
+                    var y1 =label.centroid(d)[1];
+                    var x2 =label0.centroid(d)[0];
+                    var y2 =label0.centroid(d)[1];
+                    var x3 = x2<0?x2-30:x2+30;
+                    return x3+","+y2+" "+x2+","+y2+" "+x1+","+y1;
+                })
+                .style("fill","none")
+                .style("stroke","rgb(99,99,99)")
+                .style("stroke-width","2")
+	
+        }
+        
 
 
 
@@ -541,15 +861,15 @@
 
         function clear(){
             while(display_user.firstChild){ 
-                display_user.removeChild(display_user.firstChild)
+                display_user.removeChild(display_user.firstChild);
             }
 
             while(display_commits.firstChild){ 
-                display_commits.removeChild(display_commits.firstChild)
+                display_commits.removeChild(display_commits.firstChild);
             }
 
             while(display_code_frequency.firstChild){ 
-                display_code_frequency.removeChild(display_code_frequency.firstChild)
+                display_code_frequency.removeChild(display_code_frequency.firstChild);  
             }
         }
 
@@ -567,8 +887,9 @@
             var size = selectedFile.size;
             var reader = new FileReader();
             
-            
+            clear();
             var data_length;
+            reader.readAsText(selectedFile);
             reader.onload = function(){
                 let json = JSON.parse(this.result);
                 datas = json;
@@ -576,7 +897,7 @@
                 return;
                 
             }; 
-            reader.readAsText(selectedFile);        
+                   
         }
 
         function SelectFile2()
@@ -593,8 +914,9 @@
             var size = selectedFile.size;
             var reader = new FileReader();
             
-            
+            clear();
             var data_length;
+            reader.readAsText(selectedFile); 
             reader.onload = function(){
                 let json = JSON.parse(this.result);
                 datas = json;
@@ -602,7 +924,7 @@
                 return;
                 
             }; 
-            reader.readAsText(selectedFile);        
+                  
         }
 
         function SelectFile3()
@@ -619,8 +941,9 @@
             var size = selectedFile.size;
             var reader = new FileReader();
             
-            
+            clear();
             var data_length;
+            reader.readAsText(selectedFile);    
             reader.onload = function(){
                 let json = JSON.parse(this.result);
                 datas = json;
@@ -628,7 +951,7 @@
                 return;
                 
             }; 
-            reader.readAsText(selectedFile);        
+                
         }
 
         
