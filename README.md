@@ -63,7 +63,12 @@ There are three functions in demo file
 >>>③The pie chart would show the number of loc deleted from different countries within top 100 contributors who has location information  
 
 >2.load "Save_commits"  
->>empty now  
+>> A pie chart would show up which shows the time distribution within one day of the commits  
 
 >3.load "Save_code_frequency"  
->>empty now
+>> Two bar charts would show up to show the loc added or deleted per week since the beginning of the repository  
+
+
+## Some issues  
+>1. The token would expire sometimes , and thus the getCollaborators would not always get the result from the server  
+>2. This issue might be a weakness of my implementations, I didn't use the remote database, so the data I collected can't be the newest ones as I stored the data first then load it and display it, and if we want to get the latest data , we have to manually save and load the data again.
