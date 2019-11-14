@@ -4,28 +4,28 @@
     <meta charset="UTF-8">
     <title>Using d3 to show data</title>  
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="Save_code_frequency.json"></script>
+    <script src="Save_commits.json"></script>
+    <script src="Save_users.json"></script>
 </head>
 <body>
     <h1>D3 visualization for google-research/google-research repository</h1>
 
     <div id="buttons">
-        <input type="file" name="select_file" id="files1" style="visibility:hidden;"><br>
-        <input type="button" onclick="SelectFile1()" value="load the file Save_users.json"><br>
 
-        <input type="file" name="select_file" id="files2" style="visibility:hidden;"><br>
-        <input type="button" onclick="SelectFile2()" value="load the file Save_commits.json"><br>
-
-        <input type="file" name="select_file" id="files3" style="visibility:hidden;"><br>
-        <input type="button" onclick="SelectFile3()" value="load the file Save_code_frequency.json"><br>
+        <a href="#display_user">View Contributor distribution</a><br>
+        <a href="#display_commits">View Commit distribution</a><br>
+        <a href="#display_code_frequency">View Code Frequency distribution</a><br>
+       
     </div>
 
-    <div id="display_user"></div>
-    <div id="display_commits"></div>
-    <div id="display_code_frequency"></div>
+    <div id="display_user"></div><hr>
+    <div id="display_commits"></div><hr>
+    <div id="display_code_frequency"></div><hr>
 
 
     <script>
-        var datas;
+    
         var valid_user = new Array();
         var valid_count = 0;
         var location_name = new Array();
@@ -74,10 +74,16 @@
         var _22_2_23 = 0;
         var _23_2_24 = 0;
 
+        var users_data = JSON.parse(user_data);
+        var commits_data = JSON.parse(commit_data);
+        var codes_data = JSON.parse(code_data);
 
-        
+        filter_data_user();
+        filter_data_commits();
+        filter_data_code_frequency();
 
         function filter_data_user(){
+            const datas = users_data;
             for ( var i = 0; i < datas.length ; i++){
                 if(datas[i].location != null){
                     valid_user[valid_count] = datas[i];
@@ -135,7 +141,7 @@
                 }
             }
 
-            clear();
+
             display_piechart_country();
             display_piechart_loc_a();
             display_piechart_loc_d();
@@ -145,8 +151,7 @@
         }
 
         function filter_data_code_frequency(){
-            clear();
-            const code_frequency_result = datas
+            const code_frequency_result = codes_data;
             
             for ( var i  = 0 ; i < code_frequency_result.length ; i++){
                 weekly_add.push(code_frequency_result[i][1]);
@@ -245,8 +250,7 @@
         }
 
         function filter_data_commits(){
-            clear();
-            const raw_commit_time = datas;
+            const raw_commit_time = commits_data;
             for ( var i = 0; i < raw_commit_time.length ; i++){
                 var time = raw_commit_time[i].substr(11,8)
                 commit_time.push(time);
@@ -437,8 +441,8 @@
 
             var title = d3.select("body")
                     .select("#display_user")
-                    .append("p")
-                    .text("2. Total LOC ADDED for different countries in top 100 contributors who has location information")
+                    .append("h1")
+                    .text("Total LOC ADDED for different countries in top 100 contributors who has location information")
                     .style("color", "black");
             var svg = d3.select("body")
                     .select("#display_user")
@@ -551,8 +555,8 @@
 
             var title = d3.select("body")
                     .select("#display_user")
-                    .append("p")
-                    .text("1. Total Commits compare for different countries in top 100 contributors who has location information")
+                    .append("h1")
+                    .text("Total Commits compare for different countries in top 100 contributors who has location information")
                     .style("color", "black");
             var svg = d3.select("body")
                     .select("#display_user")
@@ -649,110 +653,7 @@
 		
         }
 
-        function display_piechart_loc_a(){
-
-            var width = 700;
-            var height = 600;
-
-            var title = d3.select("body")
-                    .select("#display_user")
-                    .append("p")
-                    .text("2. Total LOC ADDED for different countries in top 100 contributors who has location information")
-                    .style("color", "black");
-            var svg = d3.select("body")
-                    .select("#display_user")
-					.append("svg")
-					.attr("width", width)
-					.attr("height", height);
-
-            var tooltip = d3.select("body").select("#display_user").append("div").attr("class", "toolTip");
-
-            var color = d3.scaleOrdinal(["#74F590", "#F56464", "#64BCF5"]);
-            g = svg.append("g").attr("transform", "translate(" + width / 2 + "," + (height/2) + ")");
-
-            var pie = d3.pie()
-                .sort(null)
-                .value(function(d) { return d.value; });
-            var radius = 250
-            var path = d3.arc()
-                .outerRadius(radius)
-                .innerRadius(20);
-
-            var path0 = d3.arc()
-                .outerRadius(radius+10)
-                .innerRadius(35);
-
-            var label = d3.arc()
-                .outerRadius(radius - 20)
-                .innerRadius(radius - 20);
-
-            var label0 = d3.arc()
-                .outerRadius(radius + 20)
-                .innerRadius(radius + 20);
-
-
-            var data = [
-                {"area":"USA","value": USA_loc[0]},
-                {"area":"UK", "value": UK_loc[0]},
-                {"area":"Canada", "value":Canada_loc[0]},
-                {"area":"Germany","value":Germany_loc[0]},
-                {"area":"Swiss","value":Swiss_loc[0]},
-                {"area":"France","value":France_loc[0]}
-            ];
-
-
-            var arc = g.selectAll(".arc")
-                .data(pie(data))
-                .enter().append("g")
-                .attr("class", "arc");
-
-            arc.on("mouseover",function(d,i){
-                d3.select(this).select("path")
-                .attr("d",path0);
-            tooltip
-                .style("left", d3.event.pageX - 50 + "px")
-                .style("top", d3.event.pageY - 70 + "px")
-                .style("display", "inline-block")
-                .html(
-                    "<div>"+(d.data.area) +"</div>"+
-                    "<div class='clearfix'><div class='pull-left toolTipCircle circle1'></div><div class='pull-left'>"+"LOC ADDED："+(d.value)+"</div></div>"
-                );
-            });
-
-            arc.on("mouseout",function(d,i){
-                d3.select(this).select("path")
-                .attr("d",path);
-                tooltip.style("display", "none");
-            });
-
-            arc.append("path")
-                .attr("d", path)
-                .attr("fill", function(d) { return color(d.data.area); });
-
-            arc.append("text")
-                .attr("transform", function(d) {
-                    var x2 =label0.centroid(d)[0];
-                    var y2 =label0.centroid(d)[1];
-                    var x3 = x2<0?x2-70:x2+30;
-                    return "translate(" + x3 + "," + y2 + ")";
-                })
-                .attr("dy", "0.3em")
-                .text(function(d) { return d.data.area; });
-
-            arc.append("polyline")
-                .attr("points",function(d){
-                    var x1 =label.centroid(d)[0];
-                    var y1 =label.centroid(d)[1];
-                    var x2 =label0.centroid(d)[0];
-                    var y2 =label0.centroid(d)[1];
-                    var x3 = x2<0?x2-30:x2+30;
-                    return x3+","+y2+" "+x2+","+y2+" "+x1+","+y1;
-                })
-                .style("fill","none")
-                .style("stroke","rgb(99,99,99)")
-                .style("stroke-width","2")
-	
-        }
+        
 
         function display_piechart_loc_d(){
         
@@ -761,8 +662,8 @@
 
             var title = d3.select("body")
                     .select("#display_user")
-                    .append("p")
-                    .text("3. Total LOC DELETED for different countries in top 100 contributors who has location information")
+                    .append("h1")
+                    .text("Total LOC DELETED for different countries in top 100 contributors who has location information")
                     .style("color", "black");
             var svg = d3.select("body")
                     .select("#display_user")
@@ -858,105 +759,7 @@
 	
         }
 
-
-        function clear(){
-            while(display_user.firstChild){ 
-                display_user.removeChild(display_user.firstChild);
-            }
-
-            while(display_commits.firstChild){ 
-                display_commits.removeChild(display_commits.firstChild);
-            }
-
-            while(display_code_frequency.firstChild){ 
-                display_code_frequency.removeChild(display_code_frequency.firstChild);  
-            }
-        }
-
-        function SelectFile1()
-        {
-            files1.click();
-        }
-
-        var inputElement = document.getElementById("files1");
-        inputElement.addEventListener("change", handleFiles1, false);
-
-        function handleFiles1() {
-            var selectedFile = document.getElementById("files1").files[0];// get the file read object
-            var name = selectedFile.name;
-            var size = selectedFile.size;
-            var reader = new FileReader();
-            
-            clear();
-            var data_length;
-            reader.readAsText(selectedFile);
-            reader.onload = function(){
-                let json = JSON.parse(this.result);
-                datas = json;
-                filter_data_user();
-                return;
-                
-            }; 
-                   
-        }
-
-        function SelectFile2()
-        {
-            files2.click();
-        }
-
-        var inputElement = document.getElementById("files2");
-        inputElement.addEventListener("change", handleFiles2, false);
-
-        function handleFiles2() {
-            var selectedFile = document.getElementById("files2").files[0];// get the file read object
-            var name = selectedFile.name;
-            var size = selectedFile.size;
-            var reader = new FileReader();
-            
-            clear();
-            var data_length;
-            reader.readAsText(selectedFile); 
-            reader.onload = function(){
-                let json = JSON.parse(this.result);
-                datas = json;
-                filter_data_commits();
-                return;
-                
-            }; 
-                  
-        }
-
-        function SelectFile3()
-        {
-            files3.click();
-        }
-
-        var inputElement = document.getElementById("files3");
-        inputElement.addEventListener("change", handleFiles3, false);
-
-        function handleFiles3() {
-            var selectedFile = document.getElementById("files3").files[0];// get the file read object
-            var name = selectedFile.name;
-            var size = selectedFile.size;
-            var reader = new FileReader();
-            
-            clear();
-            var data_length;
-            reader.readAsText(selectedFile);    
-            reader.onload = function(){
-                let json = JSON.parse(this.result);
-                datas = json;
-                filter_data_code_frequency();
-                return;
-                
-            }; 
-                
-        }
-
-        
-
-    
+ 
     </script>
 
 

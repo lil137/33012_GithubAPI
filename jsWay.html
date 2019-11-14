@@ -12,7 +12,6 @@
     -->
     <h1>Github API Access for google-research/google-research repository</h1>
     <button id = 'btnRepos'>Repos</button> 
-    <!--<button id = 'btnIssues'>Issues</button>-->
     <button id = 'btnCommits'>Commits</button>
     <button id = 'btnCollaborators'>Collaborators</button>
     <button id = 'btnCode'>Code frequency</button>
@@ -214,7 +213,7 @@
 
         const headers = {
             "Accept" : "application/vnd.github.hellcat-preview+json",
-            "Authorization" : "token 1db4b671265287b215bb2c42e9489bb4fdc6dfa4"
+            "Authorization" : "token b30c7a04d96bb8c9b17f01a67f33c87adde44ae4"
         }
         const response = await fetch(url, {
             "method" : "GET",
@@ -328,30 +327,21 @@
 
     <script src="https://cdn.bootcss.com/FileSaver.js/2014-11-29/FileSaver.js"></script>
     <script>
-        function saveHandler(opencount, closecount){
-           let data = {
-               Open_issues_count: opencount,
-               Closed_issues_count: closecount
-       }
-           var content = JSON.stringify(data);
-           var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-           saveAs(blob, "Save_issues_count(demo).json");
-       }
 
        function saveHandler_user(datas){
-           var content = JSON.stringify(datas);
+           var content = "user_data= '" + JSON.stringify(datas) + "'";
            var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
            saveAs(blob, "Save_users.json");
        }
 
        function saveHandler_commits(datas){
-           var content = JSON.stringify(datas);
+           var content = "commit_data= '" + JSON.stringify(datas) + "'";
            var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
            saveAs(blob, "Save_commits.json");
        }
 
        function saveHandler_code(datas){
-           var content = JSON.stringify(datas);
+           var content = "code_data= '" + JSON.stringify(datas) + "'";
            var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
            saveAs(blob, "Save_code_frequency.json");
        }
