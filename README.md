@@ -56,19 +56,21 @@ There are three functions in demo file
 >>Can save these data by clicking the save button showing up after clicking "Code frequency"  
 
 #### (2).Showdata.html  
->1.load "Save_users" 
+the pie chart template is adapted from: https://www.cnblogs.com/zxdh/p/7340191.html  
+the bar chart template is adapted from: http://d3.decembercafe.org/pages/lessons/8.html  
+>1.View Contributor distribution
 >>Three pie charts would show up after load the "Save_users.json"  
 >>>①The pie chart would show the distribution of countries in the top 100 contributors(ranked by the number of commits) who has location information  
 >>>②The pie chart would show the number of loc added from different countries within top 100 contributors who has location information  
 >>>③The pie chart would show the number of loc deleted from different countries within top 100 contributors who has location information  
 
->2.load "Save_commits"  
->> A pie chart would show up which shows the time distribution within one day of the commits  
+>2.View Commits distribution  
+>> The pie chart shows the time distribution within one day of all the commits  
 
->3.load "Save_code_frequency"  
->> Two bar charts would show up to show the loc added or deleted per week since the beginning of the repository  
+>3.View Code Frequency distribution  
+>> Two bar charts which show the loc added or deleted per week since the beginning of the repository  
 
 
 ## Some issues  
->1. The token would expire sometimes , and thus the getCollaborators would not always get the result from the server  
->2. This issue might be a weakness of my implementations, I didn't use the remote database, so the data I collected can't be the newest ones as I stored the data first then load it and display it, and if we want to get the latest data , we have to manually save and load the data again.
+>1. The token I used in my code would expire every time after I upload the jsWay.html, and thus the getCollaborators would not get the result from the server so if you want to check the result, please manually replace the token in the function getCollaborators() in jsWay.html, sorry about that.
+>2. This issue might be a weakness of my implementation, I didn't use the remote database, so the if you want to view the result on Showdata.html, you have to download all the three json files from jsWay.html and don't change the file names, and put them into the same directory as well.
