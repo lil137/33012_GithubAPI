@@ -72,5 +72,5 @@ the bar chart template is adapted from: http://d3.decembercafe.org/pages/lessons
 
 
 ## Some issues  
->1. The token I used in my code would expire every time after I upload the jsWay.html, and thus the getCollaborators would not get the result from the server so if you want to check the result, please manually replace the token in the function getCollaborators() in jsWay.html, sorry about that.
->2. This issue might be a weakness of my implementation, I didn't use the remote database, so the if you want to view the result on Showdata.html, you have to download all the three json files from jsWay.html and don't change the file names, and put them into the same directory as well.
+>1. The token I used in my code would expire every time after I upload the jsWay.html, so in order to display the real result, I used my real username and account to do the authorization, it's a risky thing but just for this project :)
+>2. This issue might be a weakness of my implementation, I didn't use the remote database, so the if you want to view the result on Showdata.html, you have to download all the three json files from jsWay.html first and don't change the file names, and put them into the same directory as well.
