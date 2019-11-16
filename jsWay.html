@@ -5,11 +5,6 @@
     <title>Github API Access</title>  
 </head>
 <body>
-    
-    <!--
-        The codes are adapted from:https://github.com/hnasr/javascript_playground/blob/master/githubtutorial/index.html
-
-    -->
     <h1>Github API Access for google-research/google-research repository</h1>
     <button id = 'btnRepos'>Repos</button> 
     <button id = 'btnCommits'>Commits</button>
@@ -22,14 +17,12 @@
 
     <script>
     const btnRepos = document.getElementById("btnRepos")
-    //const btnIssues = document.getElementById("btnIssues")
     const btnCommits = document.getElementById("btnCommits")
     const btnCollaborators = document.getElementById("btnCollaborators")
     const btnCode = document.getElementById("btnCode");
     const divResult = document.getElementById("divResult")
     
     btnRepos.addEventListener("click", getRepos)
-    //btnIssues.addEventListener("click", getIssues)
     btnCollaborators.addEventListener("click", getCollaborators)
     btnCommits.addEventListener("click", e=> getCommits())
     btnCode.addEventListener("click", getCode)
@@ -69,14 +62,21 @@
         divResult.appendChild(saveCommits_btn);
         divResult.appendChild(document.createElement("br"));
         divResult.appendChild(document.createElement("br"));
-        
+
+
+
+        const username = "lil137"
+        const pwd = "tckt31079"
         const headers = {
-            "Accept" : "application/vnd.github.cloak-preview"
+            "Accept" : "application/vnd.github.cloak-preview",
+            "Authorization" : "Basic " + btoa(username + ":" + pwd)
         }
+     
         const response = await fetch(url, {
             "method" : "GET",
             "headers" : headers
         })
+        
     
         const link = response.headers.get("link")
         
@@ -123,10 +123,15 @@
 
     async function save_commits() {
         
-        const url="https://api.github.com/repos/google-research/google-research/commits";      
+        const url="https://api.github.com/repos/google-research/google-research/commits";
+
+        const username = "lil137"
+        const pwd = "tckt31079"
         const headers = {
-            "Accept" : "application/vnd.github.cloak-preview"
+            "Accept" : "application/vnd.github.cloak-preview",
+            "Authorization" : "Basic " + btoa(username + ":" + pwd)
         }
+     
         const response = await fetch(url, {
             "method" : "GET",
             "headers" : headers
@@ -147,7 +152,8 @@
             var page_add = (i+1).toString();
             var each_url = "https://api.github.com/repos/google-research/google-research/commits?page=" + page_add;
             const infor_header = {
-                "Accept" : "application/vnd.github.cloak-preview"
+                "Accept" : "application/vnd.github.cloak-preview",
+                "Authorization" : "Basic " + btoa(username + ":" + pwd)
             }
 
             const infor_response = await fetch(each_url, {
@@ -160,26 +166,27 @@
                 var date =infor_result[j].commit.committer.date;
                 commits_record.push(date);
             }
-       
-
+    
         }
 
         saveHandler_commits(commits_record);
     }
 
-    async function getUsers(Username,data){
-        const url = "https://api.github.com/users/" + Username 
-        const response = await fetch(url)
-        const result = await response.json()
-        data["name"] = result.name;
-        data["company"] = result.company;
-        data["location"] = result.location;
-
-    }
-
     async function getCode(){
         const url = "https://api.github.com/repos/google-research/google-research/stats/code_frequency";
-        const response = await fetch(url)
+
+
+        const username = "lil137"
+        const pwd = "tckt31079"
+        const headers = {
+            "Authorization" : "Basic " + btoa(username + ":" + pwd)
+        }
+     
+        const response = await fetch(url, {
+            "method" : "GET",
+            "headers" : headers
+        })
+
         const result = await response.json()
 
         clear();
@@ -205,15 +212,15 @@
         saveHandler_code(result);
     }
 
-   
-
     async function getCollaborators() {
         clear();
         const url = "https://api.github.com/repos/google-research/google-research/stats/contributors"
 
+        const username = "lil137"
+        const pwd = "tckt31079"
         const headers = {
             "Accept" : "application/vnd.github.hellcat-preview+json",
-            "Authorization" : "token b30c7a04d96bb8c9b17f01a67f33c87adde44ae4"
+            "Authorization" : "Basic " + btoa(username + ":" + pwd)
         }
         const response = await fetch(url, {
             "method" : "GET",
@@ -309,7 +316,22 @@
 		    data["Commits_count"] = i.total;
 		    data["LOC_added"] = loc_add;
             data["LOC_deleted"] = loc_delete;
-            getUsers(i.author.login, data)
+
+
+            const user_url = "https://api.github.com/users/" + i.author.login
+            const user_header = {
+                "Authorization" : "Basic " + btoa(username + ":" + pwd)
+            }
+            const user_response = await fetch(user_url, {
+                "method" : "GET",
+                "headers" : user_header
+            })
+            const user_result = await user_response.json()
+            data["name"] = user_result.name;
+            data["company"] = user_result.company;
+            data["location"] = user_result.location;
+
+        
 		    datas.push(data);
 
         }
